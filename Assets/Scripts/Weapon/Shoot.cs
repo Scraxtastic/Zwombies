@@ -29,7 +29,6 @@ public class Shoot : MonoBehaviour
 
     private void ShootBullet()
     {
-        Debug.Log("Shooting bullet" + name);
         Bullet bullet = GameManager.Instance.GetBullet();
         Vector2 direction = watch.flipX ? Vector2.left : Vector2.right;
         bullet.Fire(transform.position, direction, bulletForce);
