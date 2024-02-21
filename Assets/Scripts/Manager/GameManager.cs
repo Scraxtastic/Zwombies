@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour
     [Header("Tilemap")]
     [SerializeField] private Tilemap tilemap;
 
+    [SerializeField] private TilemapHealth tilemapHealth; 
+
 
     [Header("DEBUG")] [SerializeField] private List<Bullet> bulletPool = new List<Bullet>();
     [SerializeField] private List<Bullet> bulletsInUse = new List<Bullet>();
@@ -82,5 +84,10 @@ public class GameManager : MonoBehaviour
     public Tilemap GetTilemap()
     {
         return tilemap;
+    }
+    
+    public TilemapHealth GetTilemapHealth()
+    {
+        return tilemapHealth;
     }
 }
