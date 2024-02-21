@@ -8,11 +8,20 @@ using UnityEngine.Tilemaps;
 public class Bullet : MonoBehaviour
 {
     [SerializeField] private LayerMask tileMapLayer;
+    [SerializeField] private float minY = -100;
     [Header("DEBUG")] [SerializeField] private Rigidbody2D rb;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+    }
+
+    private void Update()
+    {
+        if (transform.position.y < minY)
+        {
+            ReturnToBulletPool();
+        }
     }
 
     private void ReturnToBulletPool()
@@ -32,6 +41,16 @@ public class Bullet : MonoBehaviour
         {
             HandleTilemapCollision();
         }
+
+        if (other.gameObject.CompareTag("Player"))
+        {
+            Debug.Log("Hit Player");
+        }
+
+        if (other.gameObject.CompareTag("Enemy"))
+        {
+            Debug.Log("Hit Enemy");
+        }
     }
 
     private void HandleTilemapCollision()
@@ -42,16 +61,27 @@ public class Bullet : MonoBehaviour
         {
             return;
         }
+
         Vector3 hitPoint = hit.point;
         Vector2 dir2 = hitPoint - transform.position;
         Vector2 offsetHitpoint = hit.point + dir2 * 0.2f;
         Tilemap tilemap = GameManager.Instance.GetTilemap();
+        TilemapHealth tilemapHealth = GameManager.Instance.GetTilemapHealth();
         Vector3Int cellPosition = tilemap.WorldToCell(offsetHitpoint);
         TileBase hitTile = tilemap.GetTile(cellPosition);
-        if (hitTile != null)
+        if (hitTile == null)
         {
-            tilemap.SetTile(cellPosition, null); // Remove the tile
-            ReturnToBulletPool();
+            return;
         }
+
+        ReturnToBulletPool();
+
+        if (!tilemapHealth.AttackTile(cellPosition.x, cellPosition.y, 1))
+        {
+            // Tile was not destroyed
+            return;
+        }
+
+        tilemap.SetTile(cellPosition, null); // Remove the tile
     }
 }
